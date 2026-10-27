@@ -3,86 +3,64 @@ using UnityEngine.InputSystem;
 
 public class InputManager
 {
-    public InputMode Mode { get; private set; } = InputMode.Player;
+    [Header("Input System")]
+    private InputSystem_Actions _inputActions;
+    public InputSystem_Actions.PlayerActions PlayerMap;
+    public InputSystem_Actions.UIActions UIMap;
+    private InputMode _inputMode = InputMode.Player;
+
+    [Header("Player Mode")]
+    public Vector2 MoveInput => _inputMode == InputMode.Player ? PlayerMap.Move.ReadValue<Vector2>() : Vector2.zero;
+
+    [Header("UI Mode")]
+    public bool ConfirmPressed => _inputMode == InputMode.UI && UIMap.Click.WasPressedThisFrame();
+
+    public bool GamePadConnected { get; private set; }
 
     public void Init()
     {
-        SetMode(InputMode.Player);
+        _inputActions = new InputSystem_Actions();
+
+        PlayerMap = _inputActions.Player;
+        UIMap = _inputActions.UI;
+
+        InputSystem.onActionChange += CheckDeviceType;
+
+        SetInputMode(InputMode.Player);
     }
 
-    public void SetMode(InputMode mode)
+    public void SetInputMode(InputMode mode)
     {
-        Mode = mode;
+        _inputMode = mode;
 
-        switch (mode)
+        if (_inputActions == null)
+            return;
+
+        PlayerMap.Disable();
+        UIMap.Disable();
+
+        if (mode == InputMode.Player)
         {
-            case InputMode.Player:
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
-                Time.timeScale = 1f;
-                break;
-            case InputMode.UI:
-            case InputMode.Cinematic:
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
-                Time.timeScale = 0f;
-                break;
+            PlayerMap.Enable();
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            Time.timeScale = 1f;
+        }
+        else
+        {
+            UIMap.Enable();
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            Time.timeScale = 0f;
         }
     }
 
-    public Vector2 ReadMove()
+    private void CheckDeviceType(object actionObject, InputActionChange change)
     {
-        if (Mode != InputMode.Player)
-            return Vector2.zero;
+        if (change != InputActionChange.ActionPerformed)
+            return;
 
-        Keyboard keyboard = Keyboard.current;
-        if (keyboard == null)
-            return Vector2.zero;
-
-        Vector2 move = Vector2.zero;
-
-        if (keyboard.leftArrowKey.isPressed)
-            move.x -= 1f;
-        if (keyboard.rightArrowKey.isPressed)
-            move.x += 1f;
-        if (keyboard.downArrowKey.isPressed)
-            move.y -= 1f;
-        if (keyboard.upArrowKey.isPressed)
-            move.y += 1f;
-
-        return move.normalized;
-    }
-
-    public bool IsCrouchHeld()
-    {
-        if (Mode != InputMode.Player)
-            return false;
-
-        Keyboard keyboard = Keyboard.current;
-        return keyboard != null && (keyboard.leftShiftKey.isPressed || keyboard.rightShiftKey.isPressed);
-    }
-
-    public bool WasJumpPressedThisFrame()
-    {
-        return WasPressedThisFrame(Key.C);
-    }
-
-    public bool WasAttackPressedThisFrame()
-    {
-        return WasPressedThisFrame(Key.X);
-    }
-
-    public bool WasInteractPressedThisFrame()
-    {
-        return WasPressedThisFrame(Key.Z);
-    }
-
-    private bool WasPressedThisFrame(Key key)
-    {
-        if (Mode != InputMode.Player)
-            return false;
-
-        Keyboard keyboard = Keyboard.current;
-        return keyboard != null && keyboard[key].wasPressedThisFrame;
+        if (actionObject is InputAction action && action.actionMap?.asset == _inputActions.asset)
+            GamePadConnected = action.activeControl?.device is Gamepad;
     }
 }

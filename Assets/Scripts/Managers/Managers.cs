@@ -55,9 +55,7 @@ public class Managers : MonoBehaviour
         _instance._gameStateManager.Init();
         _instance._spawnManager.Init();
 
-        GameObject eventSystem = Instantiate(Resources.Load<GameObject>("Prefabs/UIs/EventSystem"));
-
-        eventSystem.transform.SetParent(_instance.transform);
+        _instance._resourceManager.Instantiate("Prefabs/UIs/EventSystem");
     }
 
     public static void Clear()

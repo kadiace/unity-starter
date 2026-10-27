@@ -10,10 +10,19 @@ public class ResourceManager
     public GameObject Instantiate(string path, Transform parent = null)
     {
         GameObject prefab = Load<GameObject>(path);
+        if (prefab == null)
+        {
+            Debug.LogError($"Fail to Load original - path: Prefabs/{path}");
+            return null;
+        }
+
         if (prefab.GetComponent<Poolable>() != null)
             return Managers.Pool.Pop(path, parent);
 
-        return Object.Instantiate(prefab, parent);
+        GameObject go = Object.Instantiate(prefab, parent);
+        go.name = Util.RemoveUnityCloneSuffix(go.name);
+
+        return go;
     }
 
     public void Destroy(GameObject target)
