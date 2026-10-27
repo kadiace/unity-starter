@@ -36,7 +36,7 @@ Assets/AddressableAssetsData/*/*.bin*
 # IDE settings
 .vs/
 .idea/
-.vscode/*
+.vscode/
 
 # OS files
 .DS_Store
@@ -45,13 +45,14 @@ Thumbs.db
 # Local secrets / env
 .env
 .env.*
+steam_appid.txt
 
 # Local third-party SDKs (not for VCS)
 Packages/com.discord.partnersdk/
 Packages/com.rlabrecque.steamworks.net/
-Packages/com.unity.render-pipelines.universal/**
-!Packages/com.unity.render-pipelines.universal/.gitkeep
-steam_appid.txt
 
-# Opencode
-.sisyphus
+# AI
+.ai
+.omo
+.opencode
+.playwright-mcp
