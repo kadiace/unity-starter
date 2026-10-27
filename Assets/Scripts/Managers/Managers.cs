@@ -3,72 +3,67 @@ using UnityEngine;
 public class Managers : MonoBehaviour
 {
     private static Managers _instance;
+    public static Managers Instance { get { Init(); return _instance; } }
 
+    #region Core
     private readonly ResourceManager _resourceManager = new();
     private readonly PoolManager _poolManager = new();
     private readonly DataManager _dataManager = new();
     private readonly InputManager _inputManager = new();
     private readonly SceneManagerEx _sceneManager = new();
-    private readonly UIManager _uiManager = new();
-    private readonly SoundManager _soundManager = new();
-    private readonly GameStateManager _gameStateManager = new();
-    private readonly SpawnManager _spawnManager = new();
-
-    private static Managers Instance
-    {
-        get
-        {
-            EnsureExists();
-            return _instance;
-        }
-    }
 
     public static ResourceManager Resource => Instance._resourceManager;
     public static PoolManager Pool => Instance._poolManager;
     public static DataManager Data => Instance._dataManager;
     public static InputManager Input => Instance._inputManager;
     public static SceneManagerEx Scene => Instance._sceneManager;
-    public static UIManager UI => Instance._uiManager;
-    public static SoundManager Sound => Instance._soundManager;
+    #endregion
+
+    #region Contents
+    private readonly GameStateManager _gameStateManager = new();
+    private readonly SpawnManager _spawnManager = new();
+
     public static GameStateManager GameState => Instance._gameStateManager;
     public static SpawnManager Spawn => Instance._spawnManager;
+    #endregion
 
-    private void Awake()
+    void Start()
     {
-        if (_instance != null && _instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        _instance = this;
-        DontDestroyOnLoad(gameObject);
-        _poolManager.Init(transform);
-        _dataManager.Init();
-        _inputManager.Init();
-        _sceneManager.Init();
-        _uiManager.Init();
-        _soundManager.Init(transform);
-        _gameStateManager.Init();
-        _spawnManager.Init();
+        Init();
     }
 
-    public static void EnsureExists()
+    public static void Init()
     {
         if (_instance != null)
             return;
 
-        Managers existing = FindAnyObjectByType<Managers>();
-        if (existing != null)
-        {
-            _instance = existing;
-            return;
-        }
-
-        GameObject go = GameObject.Find("@App");
+        GameObject go = GameObject.Find("@Manager");
         if (go == null)
-            go = new GameObject("@App");
+        {
+            go = new GameObject { name = "@Manager" };
+            go.AddComponent<Managers>();
+        }
+        DontDestroyOnLoad(go);
+        _instance = go.GetComponent<Managers>();
 
-        go.AddComponent<Managers>();
+        _instance._inputManager.Init();
+
+        _instance._poolManager.Init(_instance.transform);
+        _instance._dataManager.Init();
+        _instance._inputManager.Init();
+        _instance._sceneManager.Init();
+        _instance._gameStateManager.Init();
+        _instance._spawnManager.Init();
+
+        GameObject eventSystem = Instantiate(Resources.Load<GameObject>("Prefabs/UIs/EventSystem"));
+
+        eventSystem.transform.SetParent(_instance.transform);
+    }
+
+    public static void Clear()
+    {
+        Pool.Clear();
+        GameState.Clear();
+        Spawn.Clear();
     }
 }

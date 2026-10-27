@@ -1,28 +1,25 @@
-public class Define
+public enum UIEvent
 {
-    public enum UIEvent
-    {
-        Click,
-        Drag,
-    }
+    Click,
+    Drag,
+}
 
-    public enum Scene
-    {
-        Unknown,
-        Menu,
-        Game,
-    }
+public enum Scene
+{
+    Unknown,
+    Menu,
+    Game,
+}
 
-    public enum Sound
-    {
-        MainTheme,
-        Jump,
-    }
+public enum Sound
+{
+    MainTheme,
+    Jump,
+}
 
-    public enum InputMode
-    {
-        Player,
-        UI,
-        Cinematic,
-    }
+public enum InputMode
+{
+    Player,
+    UI,
+    Cinematic,
 }

@@ -3,34 +3,36 @@ using UnityEngine.InputSystem;
 
 public class InputManager
 {
-    public Define.InputMode Mode { get; private set; } = Define.InputMode.Player;
+    public InputMode Mode { get; private set; } = InputMode.Player;
 
     public void Init()
     {
-        SetMode(Define.InputMode.Player);
+        SetMode(InputMode.Player);
     }
 
-    public void SetMode(Define.InputMode mode)
+    public void SetMode(InputMode mode)
     {
         Mode = mode;
 
         switch (mode)
         {
-            case Define.InputMode.Player:
+            case InputMode.Player:
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
+                Time.timeScale = 1f;
                 break;
-            case Define.InputMode.UI:
-            case Define.InputMode.Cinematic:
+            case InputMode.UI:
+            case InputMode.Cinematic:
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
+                Time.timeScale = 0f;
                 break;
         }
     }
 
     public Vector2 ReadMove()
     {
-        if (Mode != Define.InputMode.Player)
+        if (Mode != InputMode.Player)
             return Vector2.zero;
 
         Keyboard keyboard = Keyboard.current;
@@ -53,7 +55,7 @@ public class InputManager
 
     public bool IsCrouchHeld()
     {
-        if (Mode != Define.InputMode.Player)
+        if (Mode != InputMode.Player)
             return false;
 
         Keyboard keyboard = Keyboard.current;
@@ -77,7 +79,7 @@ public class InputManager
 
     private bool WasPressedThisFrame(Key key)
     {
-        if (Mode != Define.InputMode.Player)
+        if (Mode != InputMode.Player)
             return false;
 
         Keyboard keyboard = Keyboard.current;

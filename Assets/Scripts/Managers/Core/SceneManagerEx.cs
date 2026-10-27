@@ -2,8 +2,8 @@ using UnityEngine.SceneManagement;
 
 public class SceneManagerEx
 {
-    public Define.Scene PendingScene { get; private set; } = Define.Scene.Unknown;
-    public Define.Scene CurrentScene => ParseScene(SceneManager.GetActiveScene().name);
+    public Scene PendingScene { get; private set; } = Scene.Unknown;
+    public Scene CurrentScene => ParseScene(SceneManager.GetActiveScene().name);
 
     public void Init()
     {
@@ -15,27 +15,27 @@ public class SceneManagerEx
         Load(CurrentScene);
     }
 
-    public void Load(Define.Scene scene)
+    public void Load(Scene scene)
     {
         PendingScene = scene;
         SceneManager.LoadScene(ToSceneName(scene));
     }
 
-    public bool IsCurrentScene(Define.Scene scene)
+    public bool IsCurrentScene(Scene scene)
     {
         return CurrentScene == scene;
     }
 
-    private static string ToSceneName(Define.Scene scene)
+    private static string ToSceneName(Scene scene)
     {
         return scene.ToString();
     }
 
-    private static Define.Scene ParseScene(string sceneName)
+    private static Scene ParseScene(string sceneName)
     {
-        if (System.Enum.TryParse(sceneName, out Define.Scene scene))
+        if (System.Enum.TryParse(sceneName, out Scene scene))
             return scene;
 
-        return Define.Scene.Unknown;
+        return Scene.Unknown;
     }
 }
