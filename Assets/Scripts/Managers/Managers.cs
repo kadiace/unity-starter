@@ -11,12 +11,14 @@ public class Managers : MonoBehaviour
     private readonly DataManager _dataManager = new();
     private readonly InputManager _inputManager = new();
     private readonly SceneManagerEx _sceneManager = new();
+    private readonly SoundManager _soundManager = new();
 
     public static ResourceManager Resource => Instance._resourceManager;
     public static PoolManager Pool => Instance._poolManager;
     public static DataManager Data => Instance._dataManager;
     public static InputManager Input => Instance._inputManager;
     public static SceneManagerEx Scene => Instance._sceneManager;
+    public static SoundManager Sound => Instance._soundManager;
     #endregion
 
     #region Contents
@@ -52,6 +54,7 @@ public class Managers : MonoBehaviour
         _instance._dataManager.Init();
         _instance._inputManager.Init();
         _instance._sceneManager.Init();
+        _instance._soundManager.Init();
         _instance._gameStateManager.Init();
         _instance._spawnManager.Init();
 
