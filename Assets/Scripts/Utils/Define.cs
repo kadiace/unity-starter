@@ -10,3 +10,8 @@ public enum InputMode
     UI,
     Cinematic,
 }
+
+public enum AudioClipId
+{
+    WatchSingleTick,
+}
